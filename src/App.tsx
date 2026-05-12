@@ -25,13 +25,14 @@ export default function App() {
     amount: number;
     description: string;
     category: string;
+    date: string;
   }) => {
     const newExpense: Expense = {
       id: Date.now().toString(),
       amount: parsedExpense.amount,
       category: parsedExpense.category,
       description: parsedExpense.description,
-      date: new Date().toISOString(),
+      date: new Date(parsedExpense.date).toISOString(),
       createdAt: Date.now(),
     };
 

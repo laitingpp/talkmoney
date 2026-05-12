@@ -6,6 +6,7 @@ interface ParsedExpense {
   amount: number;
   description: string;
   category: string;
+  date: string;
 }
 
 interface VoiceInputProps {
@@ -39,6 +40,7 @@ export default function VoiceInput({ onConfirm }: VoiceInputProps) {
   const [inputMode, setInputMode] = useState<'voice' | 'text'>('voice');
   const [textInput, setTextInput] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   // 解析语音文本
@@ -186,18 +188,23 @@ export default function VoiceInput({ onConfirm }: VoiceInputProps) {
     setParsedExpense(null);
     setTextInput('');
     setError(null);
+    setSelectedDate(new Date().toISOString().split('T')[0]);
   }, []);
 
   // 确认保存
   const handleConfirm = useCallback(() => {
     if (parsedExpense && parsedExpense.amount > 0) {
-      onConfirm(parsedExpense);
+      onConfirm({
+        ...parsedExpense,
+        date: selectedDate
+      });
       setTranscript('');
       setInterimTranscript('');
       setParsedExpense(null);
       setTextInput('');
+      setSelectedDate(new Date().toISOString().split('T')[0]);
     }
-  }, [parsedExpense, onConfirm]);
+  }, [parsedExpense, onConfirm, selectedDate]);
 
   // 切换输入模式
   const toggleInputMode = useCallback(() => {
@@ -348,6 +355,18 @@ export default function VoiceInput({ onConfirm }: VoiceInputProps) {
                     分类: {getCategoryName(parsedExpense.category)}
                   </p>
                 </div>
+              </div>
+              
+              {/* 日期选择 */}
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <label className="text-white/60 text-xs mb-2 block">消费日期</label>
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  max={new Date().toISOString().split('T')[0]}
+                  className="w-full bg-white/20 text-white rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-white/30 [color-scheme:dark]"
+                />
               </div>
             </div>
           )}
