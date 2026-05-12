@@ -6,11 +6,14 @@ interface ParsedExpense {
   amount: number;
   description: string;
   category: string;
+}
+
+interface ConfirmedExpense extends ParsedExpense {
   date: string;
 }
 
 interface VoiceInputProps {
-  onConfirm: (expense: ParsedExpense) => void;
+  onConfirm: (expense: ConfirmedExpense) => void;
 }
 
 // 检测浏览器是否支持语音识别
